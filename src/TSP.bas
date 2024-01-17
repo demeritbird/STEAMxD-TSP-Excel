@@ -13,6 +13,16 @@ Function WipeTableData(TargetRange As Range)
 
 End Function
 
+
+Function ResetData()
+
+    Data.Range("B18").value = 1
+    Data.Range("B19").value = 2
+    Data.Range("B20").value = 3
+    Data.Range("B21").value = 4
+
+End Function
+
 Function PopulateMap(TargetRange As Range, DisplacementX As Byte, DisplacementY As Byte)
     With Application
         .StatusBar = "Populating Map..."
@@ -84,6 +94,23 @@ Function PopulateTable(DisplacementX As Byte, DisplacementY As Byte)
 
 End Function
 
+Sub RunSolverEvolutionary()
+    With Application
+        .StatusBar = "Solving..."
+    End With
+
+    ' excel solver w evolutionary method
+    Worksheets("Data").Activate
+    SolverReset
+    SolverOk SetCell:=Range("Data!$D$24"), MaxMinVal:=2, ByChange:=Range("Data!$B$18:$B$21"), Engine:=3, EngineDesc:="Evolutionary"
+    SolverOptions AssumeNonNeg:=True
+    SolverAdd CellRef:=Range("Data!$B$18:$B$21").Address, Relation:=6
+    SolverSolve True
+    Worksheets("Main").Activate
+End Sub
+
+
+
 Sub TravellingSalesmanProblem()
 
     Dim TableRange As Range
@@ -101,8 +128,14 @@ Sub TravellingSalesmanProblem()
     End With
     
     Call WipeTableData(TableRange)
-    Call PopulateMap(TableRange, TableDisplacementX, TableDisplacementY)
+    Call ResetData
+    DoEvents
+    
     Call PopulateTable(TableDisplacementX, TableDisplacementY)
+    Call RunSolverEvolutionary
+    DoEvents
+    Call PopulateMap(TableRange, TableDisplacementX, TableDisplacementY)
+    DoEvents
     
 
     With Application
