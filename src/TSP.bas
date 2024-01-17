@@ -4,7 +4,7 @@ Option Explicit
 Function WipeTableData(TargetRange As Range)
     With Application
         .StatusBar = "Clearing Table..."
-           End With
+    End With
     ' remove data precedent arrows
     TargetRange.ShowPrecedents Remove:=False
 
@@ -13,10 +13,9 @@ Function WipeTableData(TargetRange As Range)
 
 End Function
 
-
-Function PopulateTable(TargetRange As Range, DisplacementX As Byte, DisplacementY As Byte)
+Function PopulateMap(TargetRange As Range, DisplacementX As Byte, DisplacementY As Byte)
     With Application
-        .StatusBar = "Populating Table..."
+        .StatusBar = "Populating Map..."
     End With
     
     
@@ -55,6 +54,35 @@ Function PopulateTable(TargetRange As Range, DisplacementX As Byte, Displacement
     Next i
 End Function
 
+Function PopulateTable(DisplacementX As Byte, DisplacementY As Byte)
+    With Application
+        .StatusBar = "Populating Table..."
+    End With
+    
+    Dim FromCell As Range
+    Set FromCell = Main.Range("O13")
+    Dim ToCellX As Range
+    Dim ToCellY As Range
+    Set ToCellX = Data.Range("D10")
+    Set ToCellY = Data.Range("E10")
+    
+    Dim ToCellName As Range
+    Set ToCellName = Data.Range("G10")
+    
+    Dim i As Byte
+    For i = 1 To 5
+        ToCellName.value = FromCell.value
+        ToCellX.value = Range(FromCell.value).Column - 1
+        ToCellY.value = Range(FromCell.value).Row - 1
+        
+        Set FromCell = FromCell.Offset(1, 0)
+        Set ToCellX = ToCellX.Offset(1, 0)
+        Set ToCellY = ToCellY.Offset(1, 0)
+        Set ToCellName = ToCellName.Offset(1, 0)
+    Next i
+
+
+End Function
 
 Sub TravellingSalesmanProblem()
 
@@ -73,7 +101,9 @@ Sub TravellingSalesmanProblem()
     End With
     
     Call WipeTableData(TableRange)
-    Call PopulateTable(TableRange, TableDisplacementX, TableDisplacementY)
+    Call PopulateMap(TableRange, TableDisplacementX, TableDisplacementY)
+    Call PopulateTable(TableDisplacementX, TableDisplacementY)
+    
 
     With Application
         .ScreenUpdating = True
@@ -83,5 +113,4 @@ Sub TravellingSalesmanProblem()
     End With
 
 End Sub
-
 
